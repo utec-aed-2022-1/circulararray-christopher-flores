@@ -6,20 +6,20 @@ class CircularArray
 {
 private:
     T *array;
-    int capacity;
+    int capacity,len; //len : size
     int back, front;
     
 public:
     CircularArray(); //check
     CircularArray(int _capacity); //check
-    virtual ~CircularArray();
-    void push_front(T data);
-    void push_back(T data);
-    void insert(T data, int pos);
-    T pop_front();
-    T pop_back();
-    bool is_full();
-    bool is_empty();
+    virtual ~CircularArray();//check
+    void push_front(T data);//check
+    void push_back(T data);//check | Review?
+    void insert(T data, int pos);//check
+    T pop_front();//check
+    T pop_back();//check
+    bool is_full();//check
+    bool is_empty();//check
     int size();
     void clear();
     T &operator[](int); //0,1,..... size-1
@@ -31,7 +31,22 @@ public:
 private:
     int next(int);
     int prev(int);
+    void expand();
 };
+
+
+//----------------------------------Insert
+template <class T>
+void CircularArray<T>::insert(T data, int pos) {
+    if (this->is_full() || this->is_empty()) {
+        cout << "No se puede insertar\n";
+        return;
+    }
+    for (int i = this->size(); i > pos; i--) {
+        (*this)[i] = (*this)[i-1];
+    }
+    (*this)[pos] = data;
+}
 
 //Constructor por defecto 
 template <class T>
@@ -62,6 +77,22 @@ CircularArray<T>::~CircularArray()
 }
 //-------------------------------------------
 
+template <class T>
+void CircularArray<T>::push_front (T data) {
+    if (this->is_empty()) {
+        this->array[0] = data;
+        this->back = this->front = 0;
+    } else if (this->is_full()) {
+        this->expand();
+        this->front = this->prev(this->front);
+        this->array[this->front] = data;
+    } else {
+        this->front = this->prev(this->front);
+        this->array[this->front] = data;
+    }
+    this->len++;
+}
+//------------------------
 
 template <class T>
 int CircularArray<T>::prev(int index) //Obtiene la posicion anterior del index,front
@@ -77,6 +108,7 @@ int CircularArray<T>::next(int index)//Obtiene la siguiente posicion, back
     //return (index == capacity - 1)? 0 : index + 1;
 }
 
+//------------------------------PUSH_BACK
 template <class T>
 void CircularArray<T>::push_back(T data){
     
@@ -86,8 +118,10 @@ void CircularArray<T>::push_back(T data){
     else
         this->back = next(this->back);
     array[this->back]=data; //insertando en la siguiente posición
-
+    this->len++;
 }
+//----------------------------------
+
 
 //Recorriendo 
 template <class T>
@@ -99,7 +133,53 @@ string CircularArray<T>::to_string(string sep)
     return result;    
 }
 
-
-int main(){
-    
+//----------------------------------pop_front
+template <class T>
+T CircularArray<T>::pop_front () {
+    if (this->size() == 1) {
+        this->len--;
+        this->front = this->back = -1;
+        return this->array[0];
+    } else if (!this->is_empty ()) {
+        this->len--;
+        T temp = this->array[this->front];
+        this->front = this->next(this->front);
+        return temp;
+    }
 }
+
+//----------------------------------pop_back
+template <class T>
+T CircularArray<T>::pop_back () {
+    if (this->size() == 1) {
+        this->len--;
+        this->front = this->back = -1;
+        return this->array[0];
+    } else if (!this->is_empty ()) {
+        this->len--;
+        T temp = this->array[this->back];
+        this->back = this->prev(this->back);
+        return temp;
+    }
+}
+
+
+
+//------------------------------------is_empty:
+template <class T>
+bool CircularArray<T>::is_empty() {
+    return this->front == -1;
+}
+
+//-----------------------------------is_full?
+template <class T>
+bool CircularArray<T>::is_full() {
+    return this->front == this->next(this->back) && !this->is_empty();
+}
+
+
+
+
+// int main(){
+    
+// }
