@@ -25,8 +25,9 @@ public:
     T &operator[](int); //0,1,..... size-1 | check
     void sort();//check
     bool is_sorted();//check
+    // void reverse();
+    CircularArray *reverse(); // done
 
-    void reverse();
     string to_string(string sep=" ");
 
 private:
@@ -48,6 +49,19 @@ void CircularArray<T>::insert(T data, int pos) {
     }
     (*this)[pos] = data;
 }
+
+//-------------------------------------class*class reverse-1
+template <class T>
+CircularArray<T> * CircularArray<T>::reverse() {
+    CircularArray<T>* temp = new CircularArray<T>(this->capacity);
+    int it = this->back;
+    for (int i = 0; i < this->size(); i++) {
+        temp->push_back(this->array[it]);
+        it = this->prev(it);
+    }
+    return temp;
+}
+
 
 //Constructor por defecto 
 template <class T>
