@@ -20,11 +20,12 @@ public:
     T pop_back();//check
     bool is_full();//check
     bool is_empty();//check
-    int size();
-    void clear();
-    T &operator[](int); //0,1,..... size-1
-    void sort();
-    bool is_sorted();
+    int size();//check
+    void clear();//check
+    T &operator[](int); //0,1,..... size-1 | check
+    void sort();//check
+    bool is_sorted();//check
+
     void reverse();
     string to_string(string sep=" ");
 
@@ -132,8 +133,44 @@ string CircularArray<T>::to_string(string sep)
         result += std::to_string((*this)[i]) + sep;
     return result;    
 }
+//------------------------------------Operator []
+template <class T>
+T& CircularArray<T>::operator[] (int i) {
+    if (this->is_empty ()) {
+        cout << "Lista vacía.\n";
+        exit (0);
+    }
+    return this->array[(i)%(this->capacity+1)];
+}
+//------------------------------------is_sorted
+template <class T>
+bool CircularArray<T>::is_sorted() {
+    int it = this->front;
+    for (int i = 0; i < this->size()-1; i++) {
+        if ((*this)[it] > (*this)[it+1]) { return false; }
+        it = this->next(it);
+    }
+    return true;
+}
 
-//----------------------------------pop_front
+//----------------------------------sort
+template <class T>
+void CircularArray<T>::sort() {
+    this->mergesort(0, this->size()-1);
+}
+//-----------------------------------clear
+template <class T>
+void CircularArray<T>::clear () {
+    this->len = 0;
+    this->front = this->back = -1;
+}
+
+//-------------------------------------size
+template <class T>
+int CircularArray<T>::size () {
+    return this->len;
+}
+//--------------------------------------pop_front
 template <class T>
 T CircularArray<T>::pop_front () {
     if (this->size() == 1) {
